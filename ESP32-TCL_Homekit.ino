@@ -1,10 +1,9 @@
 #include "AC.h"
-#include "Wire.h"
 
 #define BUTTON_PIN 39
 #define DEBOUNCE_TIME 50
 
-LG_REMOTE *remote;
+TCL_REMOTE *remote;
 
 // Timer
 unsigned long previousSensorMillis = 0;
@@ -21,19 +20,20 @@ void setup() {
   Serial.begin(115200);
 
   // Sensor
-  Wire.begin(26, 32);
-
+  // Wire.begin(26, 32);
+  dht.begin();
   // Remote
   ac.begin();
-  ac.setModel(GE6711AR2853M);
+  ac.setModel(TAC09CHSD);
 
   // HomeSpan
-  homeSpan.begin(Category::AirConditioners, "LG Remote");
-  homeSpan.enableWebLog(20,"pool.ntp.org","UTC-9"); // Timezone: JST
+  homeSpan.enableOTA();
+  homeSpan.begin(Category::AirConditioners, "TCL(bedroom) Remote","tclBed");
+  homeSpan.enableWebLog(20,"pool.ntp.org","UTC-3"); // Timezone: JST
   new SpanAccessory();
   new Service::AccessoryInformation();
   new Characteristic::Identify();
-  remote = new LG_REMOTE();
+  remote = new TCL_REMOTE();
 
   // // Button
   pinMode(BUTTON_PIN, INPUT);
